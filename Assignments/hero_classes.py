@@ -71,34 +71,28 @@ class Swordmaster(Hero):
         self.durability = {'mana katti': 10, 'sol katti': 5, 'rune blade': 3}
 
     def mana_katti(self):
-        if self.check_durability('mana katti'):
+        if self.durability['mana katti'] > 0:
             return self.check_attack('Mana Katti', 70, 2)
         else:
             print('Mana Katti is broken...')
-            print(f'{self.name} does nothing...')
-            return 0
+            print(f'{self.name} does a basic attack!')
+            return super().normal_attack()
 
     def sol_katti(self):
-        if self.check_durability('sol katti'):
+        if self.durability['sol katti'] > 0:
             return self.check_attack('Sol Katti', 80, 4)
         else:
             print('Sol Katti is broken...')
-            print(f'{self.name} does nothing...')
-            return 0
+            print(f'{self.name} does a basic attack!')
+            return super().normal_attack()
 
     def rune_blade(self):
-        if self.check_durability('rune blade'):
+        if self.durability['rune blade'] > 0:
             return self.check_attack('Rune Blade', 10, 1)
         else:
             print('Rune Blade is broken...')
-            print(f'{self.name} does nothing...')
-            return 0
-
-    def check_durability(self, weapon):
-        if self.durability[weapon] > 0:
-            return True
-        else:
-            return False
+            print(f'{self.name} does a basic attack!')
+            return super().normal_attack()
     
     def check_attack(self, weapon, crit_chance, modifier):
         chance = random.randint(0, 101)
