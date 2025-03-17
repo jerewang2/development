@@ -66,16 +66,52 @@ class Swordmaster(Hero):
         super().__init__()
         self.SPATK = random.randint(14, 16)
         self.SPD = random.randint(3, 5)
-        self.DODGE = 50
+        self.DODGE = 25
+        self.CRIT = 0
+        self.durability = {'mana katti': 10, 'sol katti': 5, 'rune blade': 3}
 
     def mana_katti(self):
-        pass
+        if self.check_durability('mana katti'):
+            return self.check_attack('Mana Katti', 70, 2)
+        else:
+            print('Mana Katti is broken...')
+            print(f'{self.name} does nothing...')
+            return 0
 
     def sol_katti(self):
-        pass
+        if self.check_durability('sol katti'):
+            return self.check_attack('Sol Katti', 80, 4)
+        else:
+            print('Sol Katti is broken...')
+            print(f'{self.name} does nothing...')
+            return 0
 
     def rune_blade(self):
-        pass
+        if self.check_durability('rune blade'):
+            return self.check_attack('Rune Blade', 10, 1)
+        else:
+            print('Rune Blade is broken...')
+            print(f'{self.name} does nothing...')
+            return 0
+
+    def check_durability(self, weapon):
+        if self.durability[weapon] > 0:
+            return True
+        else:
+            return False
+    
+    def check_attack(self, weapon, crit_chance, modifier):
+        chance = random.randint(0, 101)
+        if chance <= 90 and chance <= crit_chance:
+            print(f'{self.name} crit with {weapon}!')
+            self.durability[weapon.lower()] -= 1
+            return self.SPATK * modifier
+        elif chance <= 90:
+            print(f'{self.name} hit with {weapon}!')
+            self.durability[weapon.lower()] -= 1
+            return self.SPATK + modifier
+        else:
+            print(f'{self.name} missed with {weapon}...')
 
 class Lord(Hero):
     def __init__(self):
@@ -110,10 +146,8 @@ class Axe_Lord(Hero):
         pass
 
 
-
-
 if __name__ == '__main__':
-    my_hero = Hero()
+    my_hero = Swordmaster()
     print(my_hero)
     
     # Test hero class
@@ -123,7 +157,10 @@ if __name__ == '__main__':
         print('2. Normal Attack')
         print('3. Take Damage')
         print('4. Use Potion')
-        print('5. End code')
+        print('5. Mana Katti')
+        print('6. Sol Katti')
+        print('7. Rune Blade')
+        print('8. End code')
 
         user_choice = input("Choose an option: ")
         print("")
@@ -143,5 +180,12 @@ if __name__ == '__main__':
         elif user_choice == '4':
             my_hero.use_potion()
         elif user_choice == '5':
+            print(my_hero.mana_katti())
+        elif user_choice == '6':
+            print(my_hero.sol_katti())
+        elif user_choice == '7':
+            my_hero.rune_blade()
+            my_hero.display_stats()
+        elif user_choice == '8':
             print("Ending code. Thanks for playing!")
             break
