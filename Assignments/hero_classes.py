@@ -68,10 +68,10 @@ class Swordmaster(Hero):
         self.SPD = random.randint(3, 5)
         self.DODGE = 25
         self.CRIT = 0
-        self.durability = {'mana katti': 10, 'sol katti': 5, 'rune blade': 3}
+        self.durability = {'Mana katti': 10, 'Sol katti': 5, 'Rune blade': 3}
 
     def mana_katti(self):
-        if self.durability['mana katti'] > 0:
+        if self.durability['Mana katti'] > 0:
             return self.check_attack('Mana Katti', 95, 70, 2)
         else:
             print('Mana Katti is broken...')
@@ -79,7 +79,7 @@ class Swordmaster(Hero):
             return super().normal_attack()
 
     def sol_katti(self):
-        if self.durability['sol katti'] > 0:
+        if self.durability['Sol katti'] > 0:
             return self.check_attack('Sol Katti', 90, 80, 4)
         else:
             print('Sol Katti is broken...')
@@ -87,7 +87,7 @@ class Swordmaster(Hero):
             return super().normal_attack()
 
     def rune_blade(self):
-        if self.durability['rune blade'] > 0:
+        if self.durability['Rune blade'] > 0:
             return self.check_attack('Rune Blade', 80, 10, 1)
         else:
             print('Rune Blade is broken...')
@@ -113,11 +113,10 @@ class Lord(Hero):
         self.durability = {'Rapier': 15, 'Durandal': 5, 'Rex Hasta': 5}
         self.ATK = random.randint(18, 20)
         self.SPATK = random.randint(20, 25)
-        self.SPD = 0
     
     def rapier(self):
         if self.durability['Rapier'] > 0:
-            return self.check_attack('Rapier', 90, 30, 4)
+            return self.check_attack('Rapier', 90, 30, 0)
         else:
             print('Rapier is broken...')
             print(f'{self.name} does a basic attack!')
@@ -125,7 +124,7 @@ class Lord(Hero):
         
     def durandal(self):
         if self.durability['Durandal'] > 0:
-            return self.check_attack('Durandal', 75, 15, 10)
+            return self.check_attack('Durandal', 75, 15, 5)
         else:
             print('Durandal is broken...')
             print(f'{self.name} does a basic attack!')
@@ -133,7 +132,7 @@ class Lord(Hero):
 
     def rex_hasta(self):
         if self.durability['Rex Hasta'] > 0:
-            return self.check_attack('Rex Hasta', 75, 5, 15)
+            return self.check_attack('Rex Hasta', 75, 5, 10)
         else:
             print('Rex Hasta is broken...')
             print(f'{self.name} does a basic attack!')
@@ -155,22 +154,50 @@ class Lord(Hero):
 class Axe_Lord(Hero):
     def __init__(self):
         super().__init__()
+        self.durability = {'Wolf Beil': 15, 'Basilikos': 5, 'Armads': 5}
         self.ATK = random.randint(20, 22)
         self.SPATK = random.randint(20, 22)
-        self.SPD = 2
 
     def wolf_beil(self):
-        pass
+        if self.durability['Wolf Beil'] > 0:
+            return self.check_attack('Wolf Beil', 70, 10, 0)
+        else:
+            print('Wolf Beil is broken...')
+            print(f'{self.name} does a basic attack!')
+            return super().normal_attack()
 
     def basilikos(self):
-        pass
+        if self.durability['Basilikos'] > 0:
+            return self.check_attack('Basilikos', 60, 10, 10)
+        else:
+            print('Basilikos is broken...')
+            print(f'{self.name} does a basic attack!')
+            return super().normal_attack()
 
     def armads(self):
-        pass
+        if self.durability['Armads'] > 0:
+            return self.check_attack('Armads', 50, 10, 20)
+        else:
+            print('Armads is broken...')
+            print(f'{self.name} does a basic attack!')
+            return super().normal_attack()
+
+    def check_attack(self, weapon, hit, crit_chance, modifier):
+        chance = random.randint(0, 101)
+        if chance <= hit and chance <= crit_chance:
+            print(f'{self.name} crit with {weapon}!')
+            self.durability[weapon] -= 1
+            return (self.SPATK + modifier) * 2
+        elif chance <= hit:
+            print(f'{self.name} hit with {weapon}!')
+            self.durability[weapon] -= 1
+            return self.SPATK + modifier
+        else:
+            print(f'{self.name} missed with {weapon}...')
 
 
 if __name__ == '__main__':
-    my_hero = Lord()
+    my_hero = Axe_Lord()
     print(my_hero)
     
     # Test hero class
@@ -180,9 +207,9 @@ if __name__ == '__main__':
         print('2. Normal Attack')
         print('3. Take Damage')
         print('4. Use Potion')
-        print('5. Rapier')
-        print('6. Durandal')
-        print('7. Rex Hasta')
+        print('5. Wolf Beil')
+        print('6. Basilikos')
+        print('7. Armads')
         print('8. End code')
 
         user_choice = input("Choose an option: ")
@@ -203,11 +230,11 @@ if __name__ == '__main__':
         elif user_choice == '4':
             my_hero.use_potion()
         elif user_choice == '5':
-            print(my_hero.rapier())
+            print(my_hero.wolf_beil())
         elif user_choice == '6':
-            print(my_hero.durandal())
+            print(my_hero.basilikos())
         elif user_choice == '7':
-            my_hero.rex_hasta()
+            print(my_hero.armads())
         elif user_choice == '8':
             print("Ending code. Thanks for playing!")
             break
