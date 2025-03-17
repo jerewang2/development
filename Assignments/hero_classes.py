@@ -66,28 +66,28 @@ class Swordmaster(Hero):
         super().__init__()
         self.SPATK = random.randint(14, 16)
         self.SPD = random.randint(3, 5)
-        self.DODGE = 25
-        self.CRIT = 0
-        self.durability = {'Mana katti': 10, 'Sol katti': 5, 'Rune blade': 3}
+        self.DEF = 7
+        self.DODGE = 30
+        self.durability = {'Mana Katti': 10, 'Sol Katti': 5, 'Rune Blade': 3}
 
-    def mana_katti(self):
-        if self.durability['Mana katti'] > 0:
+    def special_attack_1(self):
+        if self.durability['Mana Katti'] > 0:
             return self.check_attack('Mana Katti', 95, 70, 2)
         else:
             print('Mana Katti is broken...')
             print(f'{self.name} does a basic attack!')
             return super().normal_attack()
 
-    def sol_katti(self):
-        if self.durability['Sol katti'] > 0:
+    def special_attack_2(self):
+        if self.durability['Sol Katti'] > 0:
             return self.check_attack('Sol Katti', 90, 80, 4)
         else:
             print('Sol Katti is broken...')
             print(f'{self.name} does a basic attack!')
             return super().normal_attack()
 
-    def rune_blade(self):
-        if self.durability['Rune blade'] > 0:
+    def special_attack_3(self):
+        if self.durability['Rune Blade'] > 0:
             return self.check_attack('Rune Blade', 80, 10, 1)
         else:
             print('Rune Blade is broken...')
@@ -98,14 +98,22 @@ class Swordmaster(Hero):
         chance = random.randint(0, 101)
         if chance <= hit and chance <= crit_chance:
             print(f'{self.name} crit with {weapon}!')
-            self.durability[weapon.lower()] -= 1
+            self.durability[weapon] -= 1
             return (self.SPATK + modifier) * 2
         elif chance <= hit:
             print(f'{self.name} hit with {weapon}!')
-            self.durability[weapon.lower()] -= 1
+            self.durability[weapon] -= 1
             return self.SPATK + modifier
         else:
             print(f'{self.name} missed with {weapon}...')
+            return 0
+
+    def take_damage(self, enemy_damage):
+        if random.randint(0, 101) <= self.DODGE:
+            print(f'{self.name} dodged the attack!')
+        else:
+            self.HP -= (enemy_damage - self.DEF)
+            print(f'{self.name} HP: {self.HP}')
 
 class Lord(Hero):
     def __init__(self):
@@ -113,8 +121,9 @@ class Lord(Hero):
         self.durability = {'Rapier': 15, 'Durandal': 5, 'Rex Hasta': 5}
         self.ATK = random.randint(18, 20)
         self.SPATK = random.randint(20, 25)
+        self.DEF = 10
     
-    def rapier(self):
+    def special_attack_1(self):
         if self.durability['Rapier'] > 0:
             return self.check_attack('Rapier', 90, 30, 0)
         else:
@@ -122,7 +131,7 @@ class Lord(Hero):
             print(f'{self.name} does a basic attack!')
             return super().normal_attack()
         
-    def durandal(self):
+    def special_attack_2(self):
         if self.durability['Durandal'] > 0:
             return self.check_attack('Durandal', 75, 15, 5)
         else:
@@ -130,7 +139,7 @@ class Lord(Hero):
             print(f'{self.name} does a basic attack!')
             return super().normal_attack()
 
-    def rex_hasta(self):
+    def special_attack_3(self):
         if self.durability['Rex Hasta'] > 0:
             return self.check_attack('Rex Hasta', 75, 5, 10)
         else:
@@ -150,6 +159,7 @@ class Lord(Hero):
             return self.SPATK + modifier
         else:
             print(f'{self.name} missed with {weapon}...')
+            return 0
 
 class Axe_Lord(Hero):
     def __init__(self):
@@ -157,8 +167,9 @@ class Axe_Lord(Hero):
         self.durability = {'Wolf Beil': 15, 'Basilikos': 5, 'Armads': 5}
         self.ATK = random.randint(20, 22)
         self.SPATK = random.randint(20, 22)
+        self.DEF = 15
 
-    def wolf_beil(self):
+    def special_attack_1(self):
         if self.durability['Wolf Beil'] > 0:
             return self.check_attack('Wolf Beil', 70, 10, 0)
         else:
@@ -166,7 +177,7 @@ class Axe_Lord(Hero):
             print(f'{self.name} does a basic attack!')
             return super().normal_attack()
 
-    def basilikos(self):
+    def special_attack_2(self):
         if self.durability['Basilikos'] > 0:
             return self.check_attack('Basilikos', 60, 10, 10)
         else:
@@ -174,7 +185,7 @@ class Axe_Lord(Hero):
             print(f'{self.name} does a basic attack!')
             return super().normal_attack()
 
-    def armads(self):
+    def special_attack_3(self):
         if self.durability['Armads'] > 0:
             return self.check_attack('Armads', 50, 10, 20)
         else:
@@ -194,6 +205,7 @@ class Axe_Lord(Hero):
             return self.SPATK + modifier
         else:
             print(f'{self.name} missed with {weapon}...')
+            return 0
 
 
 if __name__ == '__main__':
