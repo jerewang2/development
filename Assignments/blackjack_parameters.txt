@@ -1,0 +1,3 @@
+Game Name = Blackjack
+Number of Players = 2
+Number of Decks = 4
