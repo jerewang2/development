@@ -1,9 +1,12 @@
 import re
+import random
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+import warnings
+warnings.filterwarnings("ignore")
 
 class Blackjack:
     def __init__(self):
@@ -13,14 +16,33 @@ class Blackjack:
         self.parameters = []
         self.card_totals = []
         self.labels = []
+        self.players = {}
 
         self.retrieve_and_process()
 
         for rank in self.ranks:
             for suit in self.suits:
-                self.deck[rank + suit] = self.parameters[2]
+                self.deck[rank + suit] = int(self.parameters[2])
+
+        
         
         self.run()
+
+    def draw_card(self):
+        while True:
+            rand_rank = random.choice(self.ranks)
+            rand_suit = random.choice(self.suits)
+            if self.deck[rand_rank + rand_suit] > 0:
+                self.deck[rand_rank + rand_suit] -= 1
+                return rand_rank + rand_suit
+    
+    def setup(self):
+        for i in range(int(self.parameters[1]) + 1):
+            self.players[i + 1] = []
+        
+        for i in range(2):
+            for j in range(int(self.parameters[1]) + 1):    
+                self.players[j + 1].append(self.draw_card())
 
     def retrieve_and_process(self):
         with open('Assignments/blackjack_parameters.txt', 'r') as text:
@@ -74,10 +96,42 @@ class Blackjack:
         # Return Prediction
         return model.predict([[card_value]])
         
+    def calculate_hand_value(self, cards):
+        total = 0
+        for card in cards:
+            if card[:-1] == 'A':
+                total += 1
+            elif card[:-1] == '10' or card[:-1] == 'J' or card[:-1] == 'Q' or card[:-1] == 'K':
+                total += 10
+            else:
+                total += int(card[:-1])
+        return total
+
+    def play_game(self):
+        for player, hand in self.players.items():
+            if int(player) == int(self.parameters[1]) + 1:
+                # This is the dealer
+                pass
+            else:
+                print(f'Player {player} here is your hand: {hand}')
+                card_total = self.calculate_hand_value(hand)
+                print(f'Card total: {card_total}')
+
+                # Machine Learning
+                if self.machine_learning(card_total)[0] == 'success':
+                    print('AI suggests you can hit!')
+                else:
+                    print('AI suggests you stay.')
+
+                decision = input("Would you like to hit or pass? ")
+
     def run(self):
         # self.plot_raw_data()
-        card = 16
-        print(f'Machine Learning Prediction for card value {card}: {self.machine_learning(card)}')
+        self.setup()
+        print(self.players)
+        self.play_game()
+        # card = 16
+        # print(f'Machine Learning Prediction for card value {card}: {self.machine_learning(card)}')
 
 if __name__ == '__main__':
     game = Blackjack()
