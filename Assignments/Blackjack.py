@@ -18,6 +18,7 @@ class Blackjack:
         self.card_totals = []
         self.labels = []
         self.players = {}
+        self.dealer = []
 
         self.retrieve_and_process()
 
@@ -38,7 +39,7 @@ class Blackjack:
     def setup(self):
         for i in range(int(self.parameters[1]) + 1):
             if i == int(self.parameters[1]):
-                self.players['Dealer'] = []
+                self.dealer = []
             else:
                 self.players[i + 1] = []
         
@@ -48,7 +49,7 @@ class Blackjack:
                 self.players[j + 1].append(self.draw_card())
             
             # Draw 1 card for Dealer
-            self.players['Dealer'].append(self.draw_card())
+            self.dealer.append(self.draw_card())
 
     def retrieve_and_process(self):
         with open('Assignments/blackjack_parameters.txt', 'r') as text:
@@ -115,64 +116,72 @@ class Blackjack:
 
     def play_game(self):
         # Check if dealer wins
-        if self.calculate_hand_value(self.players['Dealer']) == 21:
+        if self.calculate_hand_value(self.dealer) == 21:
             print("Dealer has 21. Dealer wins!")
             return
 
         for player, hand in self.players.items():
-            if player != 'Dealer':
-                while True:
-                    print(f'Player {player} here is your hand: {hand}')
-                    card_total = self.calculate_hand_value(hand)
-                    print(f'Card total: {card_total}')
+            while True:
+                print(f'Player {player} here is your hand: {hand}')
+                card_total = self.calculate_hand_value(hand)
+                print(f'Card total: {card_total}')
 
-                    # Check if card total is greater than 21
-                    if card_total > 21:
-                        print("Bust!\n")
-                        break
+                # Check if card total is greater than 21
+                if card_total > 21:
+                    print("Bust!\n")
+                    break
 
-                    # Machine Learning
-                    if self.machine_learning(card_total)[0] == 'success':
-                        print('AI suggests you can hit!')
-                    else:
-                        print('AI suggests you stand.')
+                # Machine Learning
+                if self.machine_learning(card_total)[0] == 'success':
+                    print('\nAI suggests you can hit!')
+                else:
+                    print('\nAI suggests you stand.')
 
-                    decision = input("Would you like to hit or stand? ")
-                    
-                    if decision == 'hit':
-                        new_card = self.draw_card()
-                        print(f'You drew a {new_card}!')
-                        hand.append(new_card)
-                    elif decision == 'stand':
-                        print(f'Great, your turn is complete.')
-                        print(f'Final hand: {hand}\n')
-                        break
-                    else:
-                        print("Invalid input. Please try again.")
-            elif player == 'Dealer':
-                while True:
-                    print(f'Dealer hand: {hand}')
-                    dealer_card_total = self.calculate_hand_value(hand)
-                    if dealer_card_total > 21:
-                        print('Dealer busts! Players win!')
-                        break
-                    elif dealer_card_total < 16:
-                        dealer_new_card = self.draw_card()
-                        print(f'Dealer draws a {dealer_new_card}')
-                        hand.append(dealer_new_card)
-                    elif dealer_card_total >= 16 and dealer_card_total <= 21:
-                        print(f'Dealer stands.')
-                        print(f'Dealer hand: {hand}\n')
-                        break
+                decision = input("\nWould you like to hit or stand? ")
+                
+                if decision == 'hit':
+                    new_card = self.draw_card()
+                    print(f'You drew a {new_card}!')
+                    hand.append(new_card)
+                elif decision == 'stand':
+                    print(f'Great, your turn is complete.')
+                    print(f'Final hand: {hand}\n')
+                    break
+                else:
+                    print("Invalid input. Please try again.")
+            
+            # Add new hand to players hand
+            self.players[player] = hand
+        
+        while True:
+            print(f'Dealer hand: {self.dealer}')
+            dealer_card_total = self.calculate_hand_value(self.dealer)
+            if dealer_card_total > 21:
+                print('Dealer busts! Players win!')
+                break
+            elif dealer_card_total < 16:
+                dealer_new_card = self.draw_card()
+                print(f'Dealer draws a {dealer_new_card}')
+                self.dealer.append(dealer_new_card)
+            elif dealer_card_total >= 16 and dealer_card_total <= 21:
+                print(f'Dealer stands.')
+                break
+        
+        print("\nFinal Player Hand(s)")
+        print(self.players)
+        print("\nFinal Dealer Hand")
+        print(self.dealer)
+
+
+    def determine_winner(self):
+        pass
 
 
     def run(self):
         # self.plot_raw_data()
         self.setup()
-        print(self.players)
         self.play_game()
-        # card = 16
-        # print(f'Machine Learning Prediction for card value {card}: {self.machine_learning(card)}')
+        self.determine_winner
 
 if __name__ == '__main__':
     game = Blackjack()
