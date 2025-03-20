@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import warnings
+
 warnings.filterwarnings("ignore")
 
 class Blackjack:
@@ -24,8 +25,6 @@ class Blackjack:
             for suit in self.suits:
                 self.deck[rank + suit] = int(self.parameters[2])
 
-        
-        
         self.run()
 
     def draw_card(self):
@@ -100,7 +99,7 @@ class Blackjack:
         total = 0
         for card in cards:
             if card[:-1] == 'A':
-                total += 1
+                total += 11
             elif card[:-1] == '10' or card[:-1] == 'J' or card[:-1] == 'Q' or card[:-1] == 'K':
                 total += 10
             else:
@@ -108,22 +107,42 @@ class Blackjack:
         return total
 
     def play_game(self):
+        # Check if dealer wins
+        # if 
+
         for player, hand in self.players.items():
             if int(player) == int(self.parameters[1]) + 1:
                 # This is the dealer
                 pass
             else:
-                print(f'Player {player} here is your hand: {hand}')
-                card_total = self.calculate_hand_value(hand)
-                print(f'Card total: {card_total}')
+                while True:
+                    print(f'Player {player} here is your hand: {hand}')
+                    card_total = self.calculate_hand_value(hand)
+                    print(f'Card total: {card_total}')
 
-                # Machine Learning
-                if self.machine_learning(card_total)[0] == 'success':
-                    print('AI suggests you can hit!')
-                else:
-                    print('AI suggests you stay.')
+                    # Check if card total is greater than 21
+                    if card_total > 21:
+                        print("Bust!\n")
+                        break
 
-                decision = input("Would you like to hit or pass? ")
+                    # Machine Learning
+                    if self.machine_learning(card_total)[0] == 'success':
+                        print('AI suggests you can hit!')
+                    else:
+                        print('AI suggests you stay.')
+
+                    decision = input("Would you like to hit or pass? ")
+                    
+                    if decision == 'hit':
+                        new_card = self.draw_card()
+                        print(f'You drew a {new_card}!')
+                        hand.append(new_card)
+                    elif decision == 'pass':
+                        print(f'Great, your turn is complete.')
+                        print(f'Final hand: {hand}\n')
+                        break
+                    else:
+                        print("Invalid input. Please try again.")
 
     def run(self):
         # self.plot_raw_data()
