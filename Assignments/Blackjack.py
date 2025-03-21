@@ -19,7 +19,7 @@ class Blackjack:
         self.labels = []
         self.players = {}
         self.dealer = []
-        self.winners = []
+        self.status = {}
 
         self.retrieve_and_process()
 
@@ -115,6 +115,13 @@ class Blackjack:
                 total += int(card[:-1])
         return total
 
+    def dealer_busted(self):
+        for player, status in self.status.items():
+            if status == 'Playing':
+                print(f'Player {player} wins!')
+            elif status == 'Bust':
+                print(f'Player {player} busted...')
+
     def play_game(self):
         # Check if dealer wins
         if self.calculate_hand_value(self.dealer) == 21:
@@ -130,6 +137,7 @@ class Blackjack:
                 # Check if card total is greater than 21
                 if card_total > 21:
                     print("Bust!\n")
+                    self.status[player] = 'Bust'
                     break
 
                 # Machine Learning
@@ -153,6 +161,9 @@ class Blackjack:
                 
                 print("")
             
+            if player not in self.status:
+                self.status[player] = 'Playing'
+            
             # Add new hand to players hand
             self.players[player] = hand
         
@@ -160,46 +171,41 @@ class Blackjack:
             print(f'Dealer hand: {self.dealer}')
             dealer_card_total = self.calculate_hand_value(self.dealer)
             if dealer_card_total > 21:
-                print('Dealer busts! Players win!')
-                break
+                print('\nDealer busts!')
+                self.dealer_busted()
+                return
             elif dealer_card_total < 16:
                 dealer_new_card = self.draw_card()
                 print(f'Dealer draws a {dealer_new_card}')
                 self.dealer.append(dealer_new_card)
             elif dealer_card_total >= 16 and dealer_card_total <= 21:
                 print(f'Dealer Card total: {dealer_card_total}')
-                print(f'Dealer stands.')
+                print(f'Dealer stands.\n')
                 break
         
-
-        
-        print("\nFinal Player Hand(s)")
-        print(self.players)
-        print("Final Dealer Hand\n")
-        print(self.dealer)
-
-
-    def determine_winner(self):
-        dealer_total = self.calculate_hand_value(self.dealer)
-
-        for player, hand in self.players.items():
-            player_total = self.calculate_hand_value(hand)
-            if player_total > 21:
+        for player, status in self.status.items():
+            if status == 'Playing':
+                if self.calculate_hand_value(self.players[player]) > self.calculate_hand_value(self.dealer):
+                    print(f'Player {player} beat the Dealer!')
+                elif self.calculate_hand_value(self.players[player]) == self.calculate_hand_value(self.dealer):
+                    print(f'Player {player} tied with the dealer!')
+                elif self.calculate_hand_value(self.players[player]) < self.calculate_hand_value(self.dealer):
+                    print(f'Dealer beat Player {player}...')
+                else: 
+                    print(f'Dealer beat Player {player}...')
+            elif status == 'Bust':
                 print(f'Player {player} busted...')
-            elif dealer_total > 21:
-                print(f'Dealer busted...')
-            elif player_total > dealer_total:
-                print(f'Player {player} beat the Dealer!')
-            elif player_total < dealer_total:
-                print(f'Dealer beat Player {player}...')
-            elif player_total == dealer_total:
-                print(f'Player {player} and Dealer tie!')
+        
+        # print("\nFinal Player Hand(s)")
+        # print(self.players)
+        # print("")
+        # print("Final Dealer Hand")
+        # print(self.dealer)
 
     def run(self):
         # self.plot_raw_data()
         self.setup()
         self.play_game()
-        self.determine_winner()
 
 if __name__ == '__main__':
     game = Blackjack()
