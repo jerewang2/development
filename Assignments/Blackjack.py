@@ -19,6 +19,7 @@ class Blackjack:
         self.labels = []
         self.players = {}
         self.dealer = []
+        self.winners = []
 
         self.retrieve_and_process()
 
@@ -149,6 +150,8 @@ class Blackjack:
                     break
                 else:
                     print("Invalid input. Please try again.")
+                
+                print("")
             
             # Add new hand to players hand
             self.players[player] = hand
@@ -164,24 +167,39 @@ class Blackjack:
                 print(f'Dealer draws a {dealer_new_card}')
                 self.dealer.append(dealer_new_card)
             elif dealer_card_total >= 16 and dealer_card_total <= 21:
+                print(f'Dealer Card total: {dealer_card_total}')
                 print(f'Dealer stands.')
                 break
         
+
+        
         print("\nFinal Player Hand(s)")
         print(self.players)
-        print("\nFinal Dealer Hand")
+        print("Final Dealer Hand\n")
         print(self.dealer)
 
 
     def determine_winner(self):
-        pass
+        dealer_total = self.calculate_hand_value(self.dealer)
 
+        for player, hand in self.players.items():
+            player_total = self.calculate_hand_value(hand)
+            if player_total > 21:
+                print(f'Player {player} busted...')
+            elif dealer_total > 21:
+                print(f'Dealer busted...')
+            elif player_total > dealer_total:
+                print(f'Player {player} beat the Dealer!')
+            elif player_total < dealer_total:
+                print(f'Dealer beat Player {player}...')
+            elif player_total == dealer_total:
+                print(f'Player {player} and Dealer tie!')
 
     def run(self):
         # self.plot_raw_data()
         self.setup()
         self.play_game()
-        self.determine_winner
+        self.determine_winner()
 
 if __name__ == '__main__':
     game = Blackjack()
